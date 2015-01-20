@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+<meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1" />
+
+<script>
+$(function() {
+
+	$.get(selected_url,function(data,status){
+    		alert("Data: " + data + "\nStatus: " + status);
+  			 
+  			 });
+
+});
+$("#show_ingredients").click(function() {
+    $('html,body').animate({
+        scrollTop: $(".ingredien").offset().top},
+        'slow');
+});
+$("#show_directions").click(function() {
+    $('html,body').animate({
+        scrollTop: $(".directio").offset().top},
+        'slow');
+});
+$("#show_nutrient").click(function() {
+    $('html,body').animate({
+        scrollTop: $(".nutrien").offset().top},
+        'slow');
+});
+
+</script>
+
+</head>
+<body>
+<header data-role="header">
+<a data-rel="back">Back</a><h1>Smart Cut Recipe Finder</h1>
+</header>
+<div>
+<nav data-role="navbar">
+		<ul>
+			<li><a href="#" id="show_ingredients">Ingredients</a></li>
+			<li><a href="#" id="show_directions">Directions</a></li>
+			<li><a href="#" id="show_nutrient">Nutrient Info</a></li>
+		</ul>
+</nav>
+</div>
+
+
+<div id="show1" >
+<img src="<%=image%>"><br>
+Title:  <b><%=name%></b><br>
+Serves:  <b><%=serves%></b><br>
+Yields:  <b><%=yields%></b><br>
+Cost:  <b>$ <%=cost%></b><br><br><br>
+<h1 class="ingredien">INGREDIENTS</h1>
+<br>
+<table style="width:100%" border="1">
+<tr><td align="center" style="word-wrap:break-word;width:30%;"><b>Name</b></td><td align="center" style="word-wrap:break-word;width:20%;"><b>Quantity</b></td><td align="center" style="word-wrap:break-word;width:20%;"><b>Unit</b></td><td align="center" style="word-wrap:break-word;width:30%;"><b>Preparation</b></td></tr>
+<% for(var i in ingredients){
+%> 
+<tr><td align="center" style="word-wrap:break-word;width:30%;"><%=ingredients[i].name%></td><td align="center" style="word-wrap:break-word;width:20%;"><%=ingredients[i].quantity%></td><td align="center" style="word-wrap:break-word;width:20%;"><%=ingredients[i].unit%></td><td align="center" style="word-wrap:break-word;width:30%;"><%=ingredients[i].preparation%></td></tr>
+<%}%>
+</table><br><br><br>
+<h1 class="directio">DIRECTIONS</h1>
+<br>
+<ul>
+<% for(var i in directions){
+%><li><%=directions[i]%></li>
+<%}%>
+</ul>
+<br><br><br>
+<h1 class="nutrien">NUTRIENTS INFORMATION</h1>
+<br>
+<table style="width:100%" border="1">
+<tr><td align="center" style="word-wrap:break-word;width:50%;"><b>Nutrient</b></td><td align="center" style="word-wrap:break-word;width:50%;"><b>Value</b></td></tr>
+<tr><td align="center" style="word-wrap:break-word;width:50%;">Calcium</td><td align="center" style="word-wrap:break-word;width:50%;"> <%=nutritional_info.calcium%></td></tr>
+<tr><td align="center" style="word-wrap:break-word;width:50%;">Calories</td><td align="center" style="word-wrap:break-word;width:50%;"> <%=nutritional_info.calories%></td></tr>
+<tr><td align="center" style="word-wrap:break-word;width:50%;">Calories Fat</td><td align="center" style="word-wrap:break-word;width:50%;"> <%=nutritional_info.calories_fat%></td></tr>
+<tr><td align="center" style="word-wrap:break-word;width:50%;">Carbohydrates</td><td align="center" style="word-wrap:break-word;width:50%;"> <%=nutritional_info.carbohydrates%></td></tr>
+<tr><td align="center" style="word-wrap:break-word;width:50%;">Cholesterol</td><td align="center" style="word-wrap:break-word;width:50%;"> <%=nutritional_info.cholesterol%></td></tr>
+<tr><td align="center" style="word-wrap:break-word;width:50%;">Fat</td><td align="center" style="word-wrap:break-word;width:50%;"> <%=nutritional_info.fat%></td></tr>
+<tr><td align="center" style="word-wrap:break-word;width:50%;">Iron</td><td align="center" style="word-wrap:break-word;width:50%;"> <%=nutritional_info.iron%></td></tr>
+<tr><td align="center" style="word-wrap:break-word;width:50%;">Protein</td><td align="center" style="word-wrap:break-word;width:50%;"> <%=nutritional_info.protein%></td></tr>
+<tr><td align="center" style="word-wrap:break-word;width:50%;">Saturated Fat</td><td align="center" style="word-wrap:break-word;width:50%;"> <%=nutritional_info.saturated_fat%></td></tr>
+<tr><td align="center" style="word-wrap:break-word;width:50%;">Sodium</td><td align="center" style="word-wrap:break-word;width:50%;"> <%=nutritional_info.sodium%></td></tr>
+<tr><td align="center" style="word-wrap:break-word;width:50%;">Trans Fat</td><td align="center" style="word-wrap:break-word;width:50%;"> <%=nutritional_info.trans_fat%></td></tr>
+<tr><td align="center" style="word-wrap:break-word;width:50%;">Vitamin A</td><td align="center" style="word-wrap:break-word;width:50%;"> <%=nutritional_info.vitamin_a%></td></tr>
+<tr><td align="center" style="word-wrap:break-word;width:50%;">Vitamin C</td><td align="center" style="word-wrap:break-word;width:50%;"> <%=nutritional_info.vitamin_c%></td></tr>
+</table>
+
+</div>
+	
+
+</body>
+</html>
+
+
+

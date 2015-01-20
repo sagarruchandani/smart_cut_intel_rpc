@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+<meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1" />
+
+<script>
+$(function() {
+var current_plate=null;
+var suggestions=null;
+
+$("#show_it").click(function(){
+alert(suggestions);
+	$('toshow').show();
+});
+$("toshow").hide();
+
+$(document).on('pagebeforeshow', "#index",function () {
+            $(document).on('click', "#changePage",function () {     
+                $.mobile.changePage('second.html', { dataUrl : "second.ejs", data : { 'parameter' : '123' }, reloadPage : false, changeHash : true });
+            }); 
+        }); 
+
+$(document).on('pagebeforeshow', "#second",function () {
+            var parameters = $(this).data("url").split("?")[1];;
+            parameter = parameters.replace("parameter=","");  
+            alert(parameter);
+        });
+
+function count() {
+
+      		$.get("http://data.sparkfun.com/output/wpOmd69lmRil8zbd07pb.json",function(data,status){
+    		//alert("Data: " + data + "\nStatus: " + status);
+  			 current_plate=data;
+  			 
+  			 });
+ 			var counters=1;
+ 			for(var key in current_plate) {
+			if(counters==1)
+			{$("#content span").html('<table style="width:30%" border="1">'+
+			'<tr><td style="word-wrap:break-word;width:70%;">'+current_plate[key].ingredient +'</td><td style="word-wrap:break-word;width:30%;">'+current_plate[key].weight+'</td></tr></table>'); counters++;}
+			else{$("#content span").append('<table style="width:30%" border="1"><tr><td style="word-wrap:break-word;width:70%;">'+current_plate[key].ingredient +'</td><td style="word-wrap:break-word;width:30%;">'+current_plate[key].weight+'</td></tr></table>'); }          
+
+		    } 
+ 			
+ 			$.get("http://api.pearson.com:80/kitchen-manager/v1/recipes?ingredients-all=potato&limit=20",function(data,status){
+    		suggestions = data.results;
+    		//alert("Data: " + JSON.stringify(suggestions));
+    		
+  			 });
+ 			var counters=1;
+ 			for(var key in suggestions) {
+			if(counters==1)
+			{ var x={counters:suggestions[key].url}; 
+			$("#suggestions span").html('<form action="/selected_value"><table style="width:60%" border="1"><tr><td style="word-wrap:break-word;width:20%;">Snap</td><td style="word-wrap:break-word;width:30%;">Title</td></tr>'+
+			'<tr><td style="word-wrap:break-word;width:20%;"><img src="'+suggestions[key].image+'"></td><td style="word-wrap:break-word;width:30%;"><a id="myLink" href="/selected_recipe?urls='+suggestions[key].url+'">'+
+			suggestions[key].name+'</td></tr>'+
+			'</table></form>'+
+			'<div data-role="content"><a href="/second" id="changePage">Test</a></div>'); counters++;}
+			else {$("#suggestions span").append('<table style="width:60%" border="1"><tr><td style="word-wrap:break-word;width:20%;"><img src="'+
+			suggestions[key].image+'"></td><td style="word-wrap:break-word;width:30%;"><a id="myLink" href="/selected_recipe?urls='+suggestions[key].url+'">'+
+			suggestions[key].name+'</td></tr></table>');} 
+
+			
+
+		    }
+ 			
+ 			
+       }
+var auto_refresh = setInterval(count, 2000);
+count();
+      
+});
+
+		
+
+
+</script>
+
+</head>
+<body>
+<header data-role="header">
+<h1>Smart Cut Recipe Finder</h1>
+</header>
+<div>
+<nav data-role="navbar">
+		<ul>
+			<li><a href="#" id="get_current">Current recipe</a></li>
+			<li><a href="#" id="show_it">Previous recipes</a></li>
+			<li><a href="#">Scan Your Bill</a></li>
+		</ul>
+</nav>
+</div>
+	
+<div data-role="content" class="toshow" id="content">
+	
+	<ul data-role="listview" data-filter="true">
+	<table style="width:30%" border="1">
+	<tr><td style="word-wrap:break-word;width:70%;"><b>Ingredient</b></td>
+		<td style="word-wrap:break-word;width:30%;"><b>Weight (gms)</b></td>
+	</tr>
+	</table>
+	<span></span>
+	</ul>
+</div>
+<article>
+<button type="button" id="button">Find</button>
+
+</article>
+<div data-role="content" id="suggestions">
+<span></span>
+</div>
+</body>
+</html>
+
+
+
