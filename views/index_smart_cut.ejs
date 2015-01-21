@@ -11,27 +11,45 @@
 $(function() {
 var current_plate=null;
 var suggestions=null;
+var veg_list=null;
 
-$("#show_it").click(function(){
-alert(suggestions);
-	$('toshow').show();
-});
 $("toshow").hide();
 
-$(document).on('pagebeforeshow', "#index",function () {
-            $(document).on('click', "#changePage",function () {     
-                $.mobile.changePage('second.html', { dataUrl : "second.ejs", data : { 'parameter' : '123' }, reloadPage : false, changeHash : true });
-            }); 
-        }); 
+$("#show_it").click(function(){
+	
+	
+	$.ajax({
+  		type: "GET",
+  		url: "https://api.mongolab.com/api/1/databases/smart_cut/collections/all_veg?apiKey=NUpoBzUAwroA3Q58Xz_YRzjUXL0UtvZK",
+  		success: function (data) {
+        alert(data);}
+	});
+	alert("HI");
+});
 
-$(document).on('pagebeforeshow', "#second",function () {
-            var parameters = $(this).data("url").split("?")[1];;
-            parameter = parameters.replace("parameter=","");  
-            alert(parameter);
-        });
+var $select_veg = $('.select_veg');
+$select_veg.on('click', function (e) {
+        var addressValue = $(this).attr("href");
+        alert(addressValue );
+});
+
 
 function count() {
 
+       		$.get("https://api.mongolab.com/api/1/databases/smart_cut/collections/all_veg?s={'type':1}&apiKey=NUpoBzUAwroA3Q58Xz_YRzjUXL0UtvZK",function(data,status){
+  			 veg_list=data;
+  			 });
+  			 	var counter=1;
+      		for(var one_data in veg_list) {
+      		if(counter==1){
+      		$("#vegetables span").html('Vegetable List: <a id="myveg" class="select_veg" href="#" name="'+veg_list[one_data].type+'">'+veg_list[one_data].type+'</a> &nbsp');
+      			counter++;} else {
+      		$("#vegetables span").append('<a id="myveg" class="select_veg" href="#" name="'+veg_list[one_data].type+'">'+veg_list[one_data].type+'</a> &nbsp');
+      							 }
+      		}
+      		
+      		
+      		
       		$.get("http://data.sparkfun.com/output/wpOmd69lmRil8zbd07pb.json",function(data,status){
     		//alert("Data: " + data + "\nStatus: " + status);
   			 current_plate=data;
@@ -40,13 +58,13 @@ function count() {
  			var counters=1;
  			for(var key in current_plate) {
 			if(counters==1)
-			{$("#content span").html('<table style="width:30%" border="1">'+
-			'<tr><td style="word-wrap:break-word;width:70%;">'+current_plate[key].ingredient +'</td><td style="word-wrap:break-word;width:30%;">'+current_plate[key].weight+'</td></tr></table>'); counters++;}
-			else{$("#content span").append('<table style="width:30%" border="1"><tr><td style="word-wrap:break-word;width:70%;">'+current_plate[key].ingredient +'</td><td style="word-wrap:break-word;width:30%;">'+current_plate[key].weight+'</td></tr></table>'); }          
+			{$("#content span").html('<table style="width:30%;" border="1">'+
+			'<tr><td style="word-wrap:break-word;width:70%;padding-left: 50px;">'+current_plate[key].ingredient +'</td><td style="word-wrap:break-word;width:30%;padding-left: 50px;">'+current_plate[key].weight+'</td></tr></table>'); counters++;}
+			else{$("#content span").append('<table style="width:30%;" border="1"><tr><td style="word-wrap:break-word;width:70%;padding-left: 50px;">'+current_plate[key].ingredient +'</td><td style="word-wrap:break-word;width:30%;padding-left: 50px;">'+current_plate[key].weight+'</td></tr></table>'); }
 
 		    } 
  			
- 			$.get("http://api.pearson.com:80/kitchen-manager/v1/recipes?ingredients-all=potato&limit=20",function(data,status){
+ 			$.get("http://api.pearson.com:80/kitchen-manager/v1/recipes?ingredients-all=onion&ingredients-all=tomato&limit=20",function(data,status){
     		suggestions = data.results;
     		//alert("Data: " + JSON.stringify(suggestions));
     		
@@ -55,12 +73,11 @@ function count() {
  			for(var key in suggestions) {
 			if(counters==1)
 			{ var x={counters:suggestions[key].url}; 
-			$("#suggestions span").html('<form action="/selected_value"><table style="width:60%" border="1"><tr><td style="word-wrap:break-word;width:20%;">Snap</td><td style="word-wrap:break-word;width:30%;">Title</td></tr>'+
-			'<tr><td style="word-wrap:break-word;width:20%;"><img src="'+suggestions[key].image+'"></td><td style="word-wrap:break-word;width:30%;"><a id="myLink" href="/selected_recipe?urls='+suggestions[key].url+'">'+
+			$("#suggestions span").html('<form action="/selected_value"><table style="width:60%" border="1"><tr><td style="word-wrap:break-word;width:20%;padding-left: 150px;"><b>Picture</b></td><td style="word-wrap:break-word;width:30%;padding-left: 150px;"><b>Title</b></td></tr>'+
+			'<tr><td style="word-wrap:break-word;width:20%;padding-left: 100px;"><img src="'+suggestions[key].image+'"></td><td style="word-wrap:break-word;width:30%;"><a id="myLink" href="/selected_recipe?urls='+suggestions[key].url+'">'+
 			suggestions[key].name+'</td></tr>'+
-			'</table></form>'+
-			'<div data-role="content"><a href="/second" id="changePage">Test</a></div>'); counters++;}
-			else {$("#suggestions span").append('<table style="width:60%" border="1"><tr><td style="word-wrap:break-word;width:20%;"><img src="'+
+			'</table></form>'); counters++;}
+			else {$("#suggestions span").append('<table style="width:60%" border="1"><tr><td style="word-wrap:break-word;width:20%;padding-left: 100px;"><img src="'+
 			suggestions[key].image+'"></td><td style="word-wrap:break-word;width:30%;"><a id="myLink" href="/selected_recipe?urls='+suggestions[key].url+'">'+
 			suggestions[key].name+'</td></tr></table>');} 
 
@@ -75,7 +92,6 @@ count();
       
 });
 
-		
 
 
 </script>
@@ -94,12 +110,20 @@ count();
 		</ul>
 </nav>
 </div>
+
+
+<div data-role="content" class="toshow" id="vegetables">
+	<span></span>
+</div>
 	
+
+
+
 <div data-role="content" class="toshow" id="content">
 	
 	<ul data-role="listview" data-filter="true">
-	<table style="width:30%" border="1">
-	<tr><td style="word-wrap:break-word;width:70%;"><b>Ingredient</b></td>
+	<table style="width:30%;" border="1">
+	<tr><td style="word-wrap:break-word;width:70%;padding-left: 50px;"><b>Ingredient</b></td>
 		<td style="word-wrap:break-word;width:30%;"><b>Weight (gms)</b></td>
 	</tr>
 	</table>
